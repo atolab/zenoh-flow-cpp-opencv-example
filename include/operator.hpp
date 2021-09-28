@@ -13,18 +13,31 @@
 //
 
 #pragma once
+#include <vector>
+#include <string>
+#include <opencv2/dnn/dnn.hpp>
 #include <operator_wrapper.hpp>
+
 
 namespace zenoh {
 namespace flow {
 
 class State {
 private:
-  std::uint8_t counter;
+	std::vector<std::string> classes;
+	cv::dnn::Net dnn;
+	std::vector<int> flags;
+	std::vector<std::string> outputs;
+  size_t num_classes;
+
 public:
-  State ();
-  void increaseCounter ();
-  std::uint8_t getCounter ();
+  State(std::string net_cfg, std::string net_weights, std::string net_classes);
+  std::vector<int> getFlags(void);
+  std::vector<std::string> getClasses(void);
+  cv::dnn::Net getDNN(void);
+  std::vector<std::string> getOutputs(void);
+  std::size_t getNumClasses(void);
+
 };
 
 std::unique_ptr<State> initialize(const ConfigurationMap &configuration);

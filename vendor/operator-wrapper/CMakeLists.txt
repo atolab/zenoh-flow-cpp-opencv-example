@@ -19,6 +19,13 @@ project(CxxWrapper VERSION 0.1.0)
 find_program(CXXBRIDGE cxxbridge REQUIRED PATHS $ENV{HOME}/.cargo/bin)
 message(STATUS "Using cxxbridge: ${CXXBRIDGE}")
 
+
+set(cxxbridge_in ${CMAKE_SOURCE_DIR}/vendor/operator-wrapper/src/lib.rs)
+set(cxxbridge_source_out ${CMAKE_SOURCE_DIR}/src/operator_wrapper.cpp)
+set(cxxbridge_header_out ${CMAKE_SOURCE_DIR}/include/operator_wrapper.hpp)
+set(operator_wrapper_lib ${CMAKE_SOURCE_DIR}/vendor/operator-wrapper/target/release/liboperator_wrapper.a)
+
+
 set(cxxbridge_in ${CMAKE_SOURCE_DIR}/src/lib.rs)
 set(cxxbridge_source_out ${CMAKE_SOURCE_DIR}/../../src/operator_wrapper.cpp)
 set(cxxbridge_header_out ${CMAKE_SOURCE_DIR}/../../include/operator_wrapper.hpp)

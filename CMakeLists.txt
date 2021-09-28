@@ -16,14 +16,27 @@ cmake_minimum_required(VERSION 3.10)
 
 project(ZenohFlowCxxOperator VERSION 0.1.0)
 
+#include(vendor/operator-wrapper/CMakeLists.txt)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+find_package(OpenCV REQUIRED )
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 set(target_lib "cxx_operator")
 set(operator_src "src/operator.cpp")
 set(cxxbridge_header_out ${CMAKE_SOURCE_DIR}/include/operator_wrapper.hpp)
 set(cxxbridge_source_out ${CMAKE_SOURCE_DIR}/src/operator_wrapper.cpp)
 set(cxxwrapper_lib ${CMAKE_SOURCE_DIR}/vendor/operator-wrapper/target/release/liboperator_wrapper.a)
+
 
 file(READ ${cxxbridge_header_out} header_error)
 string(REPLACE "using State = ::zenoh::flow::State;"
@@ -49,4 +62,5 @@ add_library(${target_lib} SHARED
   ${operator_src}
   ${cxxbridge_source_out})
 target_include_directories(${target_lib} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(${target_lib}  ${OpenCV_LIBS} )
 target_link_libraries(${target_lib} CxxWrapper)
