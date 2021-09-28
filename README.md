@@ -1,4 +1,4 @@
-# C++ Zenoh Flow Components
+# Example C++ Zenoh Flow Operator with OpenCV
 
 [![Join the chat at https://gitter.im/atolab/zenoh-flow](https://badges.gitter.im/atolab/zenoh-flow.svg)](https://gitter.im/atolab/zenoh-flow?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -9,18 +9,11 @@
 -----------
 ## Description
 
-TODO
+:warning: This example works only on Linux and it require OpenCV with CUDA enabled to be installed, please follow the instruction on [this gits](https://gist.github.com/raulqf/f42c718a658cddc16f9df07ecc627be7) to install it.
 
-- [ ] What is a component?
-- [ ] Why a separate C++ package?
+:warning: This example works only on Linux and it require a **CUDA** capable **NVIDIA GPU**, as well as NVIDIA CUDA and CuDNN to be installed, please follow [CUDA instructions](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html) and [CuDNN instructions](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html).
 
 ## Compiling
-
-The generation of the library is a two-steps process:
-1. generating the header and source files bridging Rust and C++,
-2. generating the shared library.
-
-Two separate CMake files are provided in order to accomplish both tasks.
 
 ### Requirements
 
@@ -30,25 +23,6 @@ Two separate CMake files are provided in order to accomplish both tasks.
   ```sh
   cargo install cxxbridge-cmd
   ```
-
-### Generating the hearder and source files
-
-On Unix-based machines.
-
-```sh
-cd vendor/operator-wrapper
-mkdir build && cd build
-cmake ..
-make
-```
-
-This will generate two files:
-- `include/operator_wrapper.hpp`
-- `src/operator_wrapper.cpp`
-
-Under the hood the `cxxbridge` command is used and parses the file `vendor/operator-wrapper/src/lib.rs` to generate the bindings needed by Zenoh Flow.
-
-:warning: As of 2021-09-24 it seems the generated header file is "incorrect" and a manual edit (realized in the second CMake file) is required.
 
 ### Generating the shared library
 
@@ -61,15 +35,11 @@ make
 ```
 
 This will:
-1. "patch" the header file `include/operator_wrapper.hpp`,
-2. compile the Rust code located under the `vendor/operator_wrapper` folder and generate a static library `liboperator_wrapper.a`,
+1. "patch" the header file `include/wrapper.hpp`,
+2. compile the Rust code located under the `vendor/wrapper` folder and generate a static library `libwrapper.a`,
 3. compile the C++ wrapper code,
 4. compile the operator,
-5. link everything together producing `build/libcxx_operator.dylib` (`.so` on Linux).
+5. link everything together producing `build/libcxx_operator.so`.
 
 The `libcxx_operator` library can then be loaded by Zenoh Flow!
 
------------
-# Acknowledgments
-
-We relied on the  [CXX — safe FFI between Rust and C++](https://github.com/dtolnay/cxx) library to generates the bindings.

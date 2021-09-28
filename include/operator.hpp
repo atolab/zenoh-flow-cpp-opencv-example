@@ -16,7 +16,7 @@
 #include <vector>
 #include <string>
 #include <opencv2/dnn/dnn.hpp>
-#include <operator_wrapper.hpp>
+#include <wrapper.hpp>
 
 
 namespace zenoh {
