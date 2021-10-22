@@ -96,12 +96,12 @@ std::size_t State::getNumClasses(void) {
 }
 
 std::unique_ptr<State>
-initialize(const ConfigurationMap &configuration) {
+initialize(const rust::Vec<Configuration> &configuration) {
   std::string net_cfg;
   std::string net_weights;
   std::string net_classes;
 
-  for (auto conf : configuration.map) {
+  for (auto conf : configuration) {
     if (conf.key == "neural-network") {
       net_cfg = std::string(conf.value);
     }
@@ -117,8 +117,6 @@ initialize(const ConfigurationMap &configuration) {
   return std::make_unique<State>(net_cfg, net_weights, net_classes);
 
 }
-
-
 
 std::vector<std::uint8_t> getFrameInput(rust::Vec<Input> inputs) {
   std::vector<std::uint8_t> buffer;

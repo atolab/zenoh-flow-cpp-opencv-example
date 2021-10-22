@@ -1,0 +1,72 @@
+impl ffi::Input {
+    fn from_data_message(
+        data_message: &zenoh_flow::runtime::message::DataMessage,
+    ) -> ZFResult<Self> {
+        let data = data_message.data.try_as_bytes()?.as_ref().clone();
+
+        Ok(Self {
+            data,
+            timestamp: data_message.timestamp.get_time().as_u64(),
+        })
+    }
+}
+
+pub struct MySink;
+
+impl Node for MySink {
+    fn initialize(
+        &self,
+        configuration: &Option<std::collections::HashMap<String, String>>,
+    ) -> Box<dyn zenoh_flow::ZFState> {
+        let cxx_configuration = match configuration {
+            Some(config) => config
+                .iter()
+                .map(|(key, value)| ffi::Configuration {
+                    key: key.clone(),
+                    value: value.clone(),
+                })
+                .collect(),
+            None => vec![],
+        };
+
+        let state = {
+            #[allow(unused_unsafe)]
+            unsafe {
+                ffi::initialize(&cxx_configuration)
+            }
+        };
+        Box::new(StateWrapper { state })
+    }
+
+    fn clean(&self, _state: &mut Box<dyn ZFState>) -> ZFResult<()> {
+        Ok(())
+    }
+}
+
+#[async_trait]
+impl Sink for MySink {
+    async fn run(
+        &self,
+        context: &mut Context,
+        dyn_state: &mut Box<dyn ZFState>,
+        input: DataMessage,
+    ) -> ZFResult<()> {
+        let mut cxx_context = ffi::Context::from(context);
+        let wrapper = downcast_mut!(StateWrapper, dyn_state).unwrap();
+        let cxx_input = ffi::Input::from_data_message(&input)?;
+
+        {
+            #[allow(unused_unsafe)]
+            unsafe {
+                Ok(ffi::run(&mut cxx_context, &mut wrapper.state, cxx_input)
+                    .map_err(|_| ZFError::GenericError)?)
+            }
+        }
+    }
+}
+
+zenoh_flow::export_sink!(register);
+
+fn register() -> ZFResult<Arc<dyn Sink>> {
+    Ok(Arc::new(MySink) as Arc<dyn Sink>)
+}
