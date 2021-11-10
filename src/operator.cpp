@@ -40,9 +40,6 @@
 namespace zenoh {
 namespace flow {
 
-
-
-
 const cv::Scalar colors[] = {
     {0, 255, 0},
     {255, 255, 0},
@@ -55,12 +52,10 @@ constexpr float NMS_THRESHOLD = 0.4;
 
 
 State::State(std::string net_cfg, std::string net_weights, std::string net_classes) {
-	this->classes = std::vector<std::string>{};
-	this->dnn = cv::dnn::readNetFromDarknet(net_cfg, net_weights);
-	this->dnn.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
+  this->classes = std::vector<std::string>{};
+  this->dnn = cv::dnn::readNetFromDarknet(net_cfg, net_weights);
+  this->dnn.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
   this->dnn.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
-
-
 
   std::ifstream class_file(net_classes);
   if (!class_file) {
@@ -226,20 +221,14 @@ run(Context &context, std::unique_ptr<State> &state, rust::Vec<Input> inputs) {
     }
   }
 
-
-
   std::ostringstream label_stats;
   label_stats << "DNN Inference time: " << elapsed_microseconds << "us - Detected: " << detected;
   auto label_s = label_stats.str();
 
   auto bg_size = cv::getTextSize(label_s, cv::FONT_HERSHEY_COMPLEX_SMALL, 1.0, 1, 0);
 
-
   cv::rectangle(frame, cv::Point(0, 0), cv::Point(bg_size.width, bg_size.height+10), cv::Scalar(0,0,0), cv::FILLED);
   cv::putText(frame, label_s.c_str(), cv::Point(0, bg_size.height+5), cv::FONT_HERSHEY_COMPLEX_SMALL, 1, cv::Scalar(255, 255, 0));
-
-
-
 
   cv::imencode(".jpg", frame, result);
 
@@ -249,9 +238,9 @@ run(Context &context, std::unique_ptr<State> &state, rust::Vec<Input> inputs) {
   return results;
 }
 
-
-
-
-
+  rust::Vec<Output>
+  output_rule(Context &context, std::unique_ptr<State> &state, rust::Vec<Output> run_outputs, DeadlineMiss deadlinemiss) {
+    return run_outputs;
+  }
 } // namespace flow
 } // namespace zenoh

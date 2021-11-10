@@ -24,10 +24,10 @@ namespace flow {
 
 class State {
 private:
-	std::vector<std::string> classes;
-	cv::dnn::Net dnn;
-	std::vector<int> flags;
-	std::vector<std::string> outputs;
+  std::vector<std::string> classes;
+  cv::dnn::Net dnn;
+  std::vector<int> flags;
+  std::vector<std::string> outputs;
   size_t num_classes;
 
 public:
@@ -46,6 +46,9 @@ bool input_rule(Context &context, std::unique_ptr<State> &state,
 rust::Vec<Output> run(Context &context,
                       std::unique_ptr<State> &state,
                       rust::Vec<Input> inputs);
+
+rust::Vec<Output>
+output_rule(Context &context, std::unique_ptr<State> &state, rust::Vec<Output> run_outputs, DeadlineMiss deadlinemiss);
 
 } // namespace flow
 } // namespace zenoh
