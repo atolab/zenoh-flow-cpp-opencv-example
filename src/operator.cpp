@@ -239,7 +239,7 @@ run(Context &context, std::unique_ptr<State> &state, rust::Vec<Input> inputs) {
 }
 
   rust::Vec<Output>
-  output_rule(Context &context, std::unique_ptr<State> &state, rust::Vec<Output> run_outputs, DeadlineMiss deadlinemiss) {
+  output_rule(Context &context, std::unique_ptr<State> &state, rust::Vec<Output> run_outputs, LocalDeadlineMiss deadlinemiss) {
     return run_outputs;
   }
 } // namespace flow
