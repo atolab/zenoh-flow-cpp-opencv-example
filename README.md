@@ -13,6 +13,8 @@
 
 :warning: This example works only on Linux and it require a **CUDA** capable **NVIDIA GPU**, as well as NVIDIA CUDA and CuDNN to be installed, please follow [CUDA instructions](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html) and [CuDNN instructions](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html).
 
+:warning: This examples uses a JSON library for parsing the configuration, it can be found [Here](https://json.nlohmann.me/)
+
 ## Compiling
 
 ### Requirements
@@ -25,6 +27,8 @@
   ```
 
 ### Generating the shared library
+
+## Manually
 
 On Unix-based machines.
 
@@ -43,3 +47,10 @@ This will:
 
 The `libcxx_operator` library can then be loaded by Zenoh Flow!
 
+## Single command:
+
+```sh
+make fresh
+```
+
+The `libopencv_dectect_op` library can then be loaded by Zenoh Flow!

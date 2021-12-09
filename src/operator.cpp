@@ -28,6 +28,9 @@
 #include <iomanip>
 #include <chrono>
 
+
+#include <nlohmann/json.hpp>
+
 #include <opencv2/dnn/dnn.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/dnn.hpp>
@@ -36,6 +39,9 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgcodecs.hpp>
+
+// for convenience
+using json = nlohmann::json;
 
 namespace zenoh {
 namespace flow {
@@ -90,24 +96,26 @@ std::size_t State::getNumClasses(void) {
   return this->num_classes;
 }
 
-std::unique_ptr<State>
-initialize(const rust::Vec<Configuration> &configuration) {
+std::unique_ptr<State> initialize(rust::Str json_configuration) {
   std::string net_cfg;
   std::string net_weights;
   std::string net_classes;
 
-  for (auto conf : configuration) {
-    if (conf.key == "neural-network") {
-      net_cfg = std::string(conf.value);
-    }
-    if (conf.key == "network-weights") {
-      net_weights = std::string(conf.value);
-    }
-    if (conf.key == "network-classes") {
-      net_classes = std::string(conf.value);
-    }
+  json config;
+
+  config = json::parse(json_configuration);
+
+  if (config.contains("neural-network")) {
+    net_cfg = config["neural-network"].get<std::string>();
   }
 
+  if (config.contains("network-weights")) {
+    net_weights = config["network-weights"].get<std::string>();
+  }
+
+  if (config.contains("network-classes")) {
+    net_classes = config["network-classes"].get<std::string>();
+  }
 
   return std::make_unique<State>(net_cfg, net_weights, net_classes);
 

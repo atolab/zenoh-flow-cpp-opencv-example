@@ -16,6 +16,18 @@ cmake_minimum_required(VERSION 3.10)
 
 project(ZenohFlowCxxNode VERSION 0.1.0)
 
+include(FetchContent)
+
+FetchContent_Declare(json
+  GIT_REPOSITORY https://github.com/nlohmann/json
+  GIT_TAG v3.7.3)
+
+FetchContent_GetProperties(json)
+  if(NOT json_POPULATED)
+    FetchContent_Populate(json)
+    add_subdirectory(${json_SOURCE_DIR} ${json_BINARY_DIR} EXCLUDE_FROM_ALL)
+  endif()
+
 # TODO: Detect that we are running on a Apple M1 and set this variable to this value.
 # https://gitlab.kitware.com/cmake/cmake/-/issues/20989
 # set(CMAKE_OSX_ARCHITECTURES arm64)
@@ -67,9 +79,9 @@ elseif ((${SOURCE} AND (${OPERATOR} OR ${SINK})) OR (${OPERATOR} AND (${SOURCE} 
 endif()
 
 if (${SOURCE})
-  set(node source)
+  message(FATAL_ERROR "Only Operator node can be generated from this code.")
 elseif (${SINK})
-  set(node sink)
+  message(FATAL_ERROR "Only Operator node can be generated from this code.")
 elseif (${OPERATOR})
   set(node operator)
 endif()
@@ -132,5 +144,6 @@ add_library(${LIB_NAME} SHARED
   ${cxxbridge_source_out})
 add_dependencies(${LIB_NAME} CxxBridge)
 target_include_directories(${LIB_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+target_link_libraries(${LIB_NAME} PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(${LIB_NAME}  PUBLIC ${OpenCV_LIBS} )
 target_link_libraries(${LIB_NAME} PUBLIC CxxWrapper)
